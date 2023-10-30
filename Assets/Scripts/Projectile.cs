@@ -8,10 +8,11 @@ public class Projectile : MonoBehaviour
 {
     public float power = 10.0f;
     [SerializeField] private LayerMask collisionLayer;
+    [SerializeField] private int maxCountReflect = 3;
 
     private Vector3 _velocity;
     private Vector3 _position;
-
+    private int _countReflect;
 
     private void FixedUpdate()
     {
@@ -24,7 +25,7 @@ public class Projectile : MonoBehaviour
             if (surfaceNormal.z <= -.5f)
             {
                 _velocity = Vector3.Reflect(_velocity, surfaceNormal);
-                _velocity *= Constant.Bounce / 5f;
+                _velocity *= Constant.Bounce / 10f;
             }
             else
             {
@@ -45,7 +46,12 @@ public class Projectile : MonoBehaviour
                     DecalPainter.Instance?.PaintDecal(hit);
             }
 
-            if (_velocity.sqrMagnitude <= 0.1f)
+            _countReflect--;
+            if (_countReflect <= 0)
+            {
+                Explosion(hit);
+            }
+            else if (_velocity.sqrMagnitude <= 0.2f)
             {
                 Explosion(hit);
             }
@@ -65,6 +71,7 @@ public class Projectile : MonoBehaviour
 
     public void Fire(float _power)
     {
+        _countReflect = maxCountReflect;
         transform.SetParent(null);
         power = _power;
         _velocity = transform.forward * power;

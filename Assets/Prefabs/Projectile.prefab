@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7334161976270231823}
   - component: {fileID: -4253253347862187185}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,4 +47,3 @@ MonoBehaviour:
   collisionLayer:
     serializedVersion: 2
     m_Bits: 1
-  trailTexture: {fileID: 2800000, guid: be423a54b981d38428de82ad12534629, type: 3}

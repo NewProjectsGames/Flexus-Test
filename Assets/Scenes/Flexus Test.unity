@@ -2092,7 +2092,7 @@ MonoBehaviour:
   collisionLayer:
     serializedVersion: 2
     m_Bits: 1
-  viewReflect: 1
+  viewReflect: 0
 --- !u!4 &1812495200
 Transform:
   m_ObjectHideFlags: 0

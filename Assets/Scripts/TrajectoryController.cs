@@ -34,7 +34,7 @@ public class TrajectoryController : MonoBehaviour
                     if (surfaceNormal.z <= -.5f)
                     {
                         _velocity = Vector3.Reflect(_velocity, surfaceNormal);
-                        _velocity *= Constant.Bounce/5f;
+                        _velocity *= Constant.Bounce/10f;
                     }else
                     {
                         _velocity = Vector3.Reflect(_velocity, surfaceNormal);
