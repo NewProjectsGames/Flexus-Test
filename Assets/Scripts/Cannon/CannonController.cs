@@ -107,27 +107,49 @@ namespace Flexus.Cannon
 
         // ── Private helpers ──────────────────────────────────────────────
 
+        private bool IsPointerOverUI()
+        {
+            if (EventSystem.current == null) return false;
+
+            // Check touch
+            if (Input.touchCount > 0)
+            {
+                return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+            }
+            
+            // Check mouse
+            return EventSystem.current.IsPointerOverGameObject();
+        }
+
         /// <summary>
         /// Central input handler — guards UI-layer clicks, then delegates to
         /// <see cref="Aim"/> and <see cref="Fire"/>.
         /// </summary>
         private void HandleInput()
         {
-            if (Input.GetMouseButtonDown(0))
+            bool isDown = Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
+            bool isUp = Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Canceled));
+
+            if (isDown)
             {
                 // Prevent the cannon from reacting to clicks on UI elements.
-                if (!EventSystem.current.IsPointerOverGameObject())
+                if (!IsPointerOverUI())
+                {
                     _isDragging = true;
+                    _lastMousePosition = Input.mousePosition;
+                }
             }
 
             if (_isDragging)
             {
                 Aim();
-                Fire();
+                Fire(isUp);
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (isUp)
+            {
                 _isDragging = false;
+            }
         }
 
         /// <summary>
@@ -136,14 +158,6 @@ namespace Flexus.Cannon
         /// </summary>
         private void Aim()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                _lastMousePosition = Input.mousePosition;
-                return;
-            }
-
-            if (!Input.GetMouseButton(0)) return;
-
             Vector3 delta = Input.mousePosition - _lastMousePosition;
             _lastMousePosition = Input.mousePosition;
 
@@ -164,9 +178,9 @@ namespace Flexus.Cannon
         /// Fires a projectile when the mouse button is released.
         /// Retrieves a pooled instance, positions and orients it, then calls Fire().
         /// </summary>
-        private void Fire()
+        private void Fire(bool isUp)
         {
-            if (!Input.GetMouseButtonUp(0)) return;
+            if (!isUp) return;
 
             GameObject projectileGo = _projectilePool.GetProjectile();
             if (projectileGo == null)
